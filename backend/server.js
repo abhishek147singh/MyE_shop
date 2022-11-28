@@ -25,27 +25,15 @@ app.use('/api/users' , userRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/reviews', reviewRouter);
 
-
-
 app.use((err , req , res , next) => {
     res.status(500).send({message : err.message }); 
 })
-
-/**
- * Storage image related work
- */
-
-
-
-/**
- * Storage image related word end at here
- */
 
 app.get("/api/keys/paypal" , (req , res) => {
     res.send(process.env.PAYPAL_CLIENT_ID || 'sb')
 })
 
 
-app.listen(5000 , () => {
+app.listen( process.env.PORT || 5000 , () => {
     console.log("server is running at http://localhost:5000");
 })
