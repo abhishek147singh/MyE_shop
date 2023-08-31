@@ -71,8 +71,8 @@ export default function MultiActionAreaCard(props) {
             <CardActions>
 
                 {
-                    countInStock > 0 ? (<Button onClick={addToCartHandler} size='small' variant="outlined" color="inherit">Add to cart</Button>)
-                        : (<Button disabled onClick={addToCartHandler} size='small' variant="contained" color="inherit">Add to cart</Button>)
+                    countInStock > 0 ? (<Button sx={{width:"100%"}} color="inherit" onClick={addToCartHandler} size='small' variant="contained" >Add to cart</Button>)
+                        : (<Button sx={{width:"100%"}} disabled onClick={addToCartHandler} size='small' variant="contained" color="inherit">Add to cart</Button>)
                 }
             </CardActions>
         </Card>

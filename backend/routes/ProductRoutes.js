@@ -63,9 +63,6 @@ productRouter.get("/search", expressAsyncHandler(async (req, res) => {
         ...categoryFilter,
         ...priceFilter,
         ...ratingFilter
-    },{
-        "comments": [{ "user":0 }],
-        "ratings" : [{ "user":0 }]  
     }).sort(sortOrder).skip(pageSize * (page - 1)).limit(pageSize);
 
     const countProducts = await Product.countDocuments({

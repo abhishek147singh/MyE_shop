@@ -28,7 +28,8 @@ export default function HomeScreen() {
             dispatch({type:'FETCH_REQUEST'})
             try {
                 const getData = await axios.get("/api/products");   
-                dispatch({type:'FETCH_SUCCESS' , payload: getData.data })
+                // console.log(getData);
+                dispatch({type:'FETCH_SUCCESS' , payload: getData.data });
             } catch (error) {
                 dispatch({type:'FETCH_FAIL' , payload:error.message});
             }

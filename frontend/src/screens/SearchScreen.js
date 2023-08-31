@@ -1,7 +1,7 @@
 import { Alert, Button, Card, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState, useReducer } from 'react';
-import { useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Products from '../componets/Products';
 import Rating from '../componets/Rating';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -33,14 +33,25 @@ export default function SearchScreen() {
     const [categories, setCategories] = useState([]);
 
     const { search } = useLocation();
-    const sp = new URLSearchParams(search);
-    const [category, setCategory] = useState(sp.get('category') || 'all');
-    const [price, setPrice] = useState(sp.get('price') || 'all');
-    const [rating, setRating] = useState(sp.get('rating') || 'all');
-    const [order, setOrder] = useState(sp.get('order') || 'newest');
-    const [page, setPage] = useState(sp.get('page') || 1);
-    const query = sp.get('query') || 'all';
+    const navigate = useNavigate();
+    const sp       = new URLSearchParams(search);
+    const category = sp.get('category') || 'all';
+    const price    = sp.get('price') || 'all';
+    const rating   = sp.get('rating') || 'all';
+    const order    = sp.get('order') || 'newest';
+    const page     = sp.get('page') || 1;
+    const query    = sp.get('query') || 'all';
 
+    const getFilterUrl = (Filter) => {
+        const filterCategory = Filter.category || category;
+        const filterPrice = Filter.price || price;
+        const filterRating = Filter.rating || rating;
+        const filterOrder = Filter.order || order;
+        const filterPage = Filter.page || page;
+        const filterQuery = Filter.query || query;
+
+        return `/search?page=${filterPage}&query=${filterQuery}&category=${filterCategory}&price=${filterPrice}&rating=${filterRating}&order=${filterOrder}`;
+    }
 
     const [{ loading, error, products, pages, countProducts }, dispatch] = useReducer(reducer, { loading: true, error: '' });
 
@@ -56,7 +67,6 @@ export default function SearchScreen() {
         }
         fetchData();
     }, [category, error, order, page, price, query, rating]);
-
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -120,7 +130,7 @@ export default function SearchScreen() {
                                     <InputLabel id="category-select-label">Category</InputLabel>
                                     <Select
                                         id="category-select-label"
-                                        onChange={(e) => setCategory(e.target.value)}
+                                        onChange={(e) => navigate(getFilterUrl({ category: e.target.value }))}
                                         label="Category"
                                         value={category}
                                     >
@@ -144,7 +154,7 @@ export default function SearchScreen() {
                                     <Select
                                         id="price-select-label"
                                         label="Price"
-                                        onChange={(e) => { setPrice(e.target.value) }}
+                                        onChange={(e) => navigate(getFilterUrl({ price: e.target.value }))}
                                         value={price}
                                     >
                                         <MenuItem value='all'>
@@ -167,7 +177,7 @@ export default function SearchScreen() {
                                     <Select
                                         id="review-select-label"
                                         label="Reviews"
-                                        onChange={(e) => { setRating(e.target.value) }}
+                                        onChange={(e) => navigate(getFilterUrl({ rating: e.target.value }))}
                                         value={rating}
                                     >
                                         {
@@ -202,11 +212,7 @@ export default function SearchScreen() {
                                                 {query !== 'all' || categories !== 'all' || rating !== 'all' || price !== 'all'
                                                     ? (
                                                         <Button
-                                                            onClick={() => {
-                                                                setPrice('all');
-                                                                setCategory('all');
-                                                                setRating('all');
-                                                            }}
+                                                            onClick={() => navigate(getFilterUrl({ price: 'all', category: 'all', rating: 'all' }))}
                                                         >
                                                             <CancelIcon />
                                                         </Button>
@@ -223,7 +229,7 @@ export default function SearchScreen() {
                                                         id="sort-select-label"
                                                         label="Sort By"
                                                         value={order}
-                                                        onChange={(e) => setOrder(e.target.value)}
+                                                        onChange={(e) => navigate(getFilterUrl({ order: e.target.value }))}
                                                         size="small"
                                                     >
                                                         <MenuItem value="newest">Newest Arrivals</MenuItem>
@@ -252,15 +258,18 @@ export default function SearchScreen() {
                                     <div className='center'>
                                         {
                                             [...Array(pages).keys()].map(x => (
-                                                <Button 
+                                                <Link
                                                     key={x}
-                                                    value={x + 1}
-                                                    className={Number(page) === x + 1 ? 'text-bold' : ''}
-                                                    variant={Number(page) === x + 1 ? "contained" : "outlined"}
-                                                    onClick={(e) => setPage(e.target.value)}
+                                                    to={getFilterUrl({ page: x + 1 })}
                                                 >
-                                                    {x + 1}
-                                                </Button>
+                                                    <Button
+                                                        value={x + 1}
+                                                        className={Number(page) === x + 1 ? 'text-bold' : ''}
+                                                        variant={Number(page) === x + 1 ? "contained" : "outlined"}
+                                                    >
+                                                        {x + 1}
+                                                    </Button>
+                                                </Link>
                                             ))
                                         }
                                     </div>
